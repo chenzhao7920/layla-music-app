@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   TablePagination,
   Drawer,
@@ -9,31 +9,50 @@ import {
   InputLabel,
   Button,
 } from "@mui/material";
-import { searchReleases } from "../api/discogsApi";
-import { genreList } from "../utils/constant";
-import noCoverImg from "../statics/images/no_cover_img.png";
-import crossImg from "../statics/images/cross.svg";
+import { searchReleases, getMaster } from "../../api/discogsApi";
+import { genreList } from "../../utils/constant";
+import noCoverImg from "../../statics/images/no_cover_img.png";
+import crossImg from "../../statics/images/cross.svg";
+import { useQuery, useQueries } from "@tanstack/react-query";
 
-export default function AlbumList() {
-  const [data, setData] = useState(null);
+export default function Home() {
   const [page, setPage] = useState(1);
   const [year, setYear] = useState("2024");
   const [country, setCountry] = useState("Canada");
   const [genre, setGenre] = useState("");
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   //filter drawer
   const [open, setOpen] = useState(false);
   const [yearF, setYearF] = useState("");
   const [countryF, setCountryF] = useState("");
   const [genreF, setGenreF] = useState("");
-  useEffect(() => {
-    searchReleases({ country, year, genre, page, rowsPerPage }).then((res) =>
-      setData(res)
-    );
-  }, [page, rowsPerPage, country, year, genre]);
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["releases", country, year, genre, page, rowsPerPage],
+    queryFn: () => searchReleases({ country, year, genre, page, rowsPerPage }),
+  });
+
+  const artistQueries = useQueries({
+    queries: (data?.results || []).map((item) => ({
+      queryKey: ["master", item.master_id],
+      queryFn: () => getMaster(item.master_id),
+      enabled: !!data, // Only fetch artist data if release data is available
+    })),
+  });
+  const mappedArtistData = (data?.results || []).reduce((acc, item, index) => {
+    const artistQuery = artistQueries[index];
+    if (artistQuery?.data) {
+      acc[item.id] = artistQuery.data.artists; // Map `item.id` to the `artists` array
+    } else {
+      acc[item.id] = []; // Default to an empty array while loading
+    }
+    return acc;
+  }, {});
+
   const handleChangePage = (_, newPage) => {
     setPage(newPage + 1);
   };
+
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(1);
@@ -63,6 +82,10 @@ export default function AlbumList() {
     setGenre(genreF);
     setOpen(false);
   };
+
+  if (isLoading) return <p> Loading ...</p>;
+  if (error) return <p>Error: {error.message}</p>;
+
   return (
     <>
       {/* pagination */}
@@ -105,6 +128,7 @@ export default function AlbumList() {
       {!!data ? (
         <div className="flex flex-col gap-4 py-4">
           {data.results.map((item) => {
+            const artists = mappedArtistData[item.id] || [];
             return (
               <div
                 key={item.id}
@@ -137,6 +161,22 @@ export default function AlbumList() {
                       </div>
                     </div>
                   </div>
+                  <p>
+                    <span className="font-medium">Artists</span>:{" "}
+                    {artists.length > 0
+                      ? artists.map((a, index) => (
+                          <a
+                            key={index}
+                            href={"/artist/" + a.id + "/" + a.name}
+                            className="underline"
+                          >
+                            {a.name}
+                            {/* Add a comma unless it's the last artist */}
+                            {index < artists.length - 1 && ", "}{" "}
+                          </a>
+                        ))
+                      : "-"}
+                  </p>
                   <p>
                     <span className="font-medium">Format</span>:{" "}
                     {item.format?.join(", ")}

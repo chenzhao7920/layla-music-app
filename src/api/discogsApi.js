@@ -39,3 +39,8 @@ export const getReleaseDetails = async (releaseId) => {
   const response = await discogsClient.get(`/releases/${releaseId}`);
   return response.data;
 };
+
+export const getMaster = async (masterid) => {
+  const response = await discogsClient.get(`/masters/${masterid}`);
+  return response.data;
+};
