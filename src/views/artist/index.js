@@ -1,8 +1,8 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { getArtistReleases, getReleaseDetails } from "../../api/discogsApi";
+import { getArtistReleases } from "../../api/discogsApi";
 import AlbumCard from "./compoments/albumCard";
-import { useQuery, useQueries } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 const Artist = () => {
   const { artist_id, name } = useParams();
   const { data, isLoading, error } = useQuery({
@@ -10,25 +10,7 @@ const Artist = () => {
     queryFn: () => getArtistReleases(artist_id),
   });
 
-  const artistReleasesDetailQueries = useQueries({
-    queries: (data?.releases || []).map((item) => ({
-      queryKey: ["release_details", item.id],
-      queryFn: () => getReleaseDetails(item.id),
-      enabled: !!data, // Only fetch artist data if release data is available
-    })),
-  });
-  const isLoadingArtistReleases = artistReleasesDetailQueries.some(
-    (query) => query.isLoading
-  );
-  const detailedReleases = (data?.releases || []).reduce(
-    (acc, release, index) => {
-      const details = artistReleasesDetailQueries[index]?.data;
-      acc = [...acc, { ...release, details }];
-      return acc;
-    },
-    []
-  );
-  if (isLoading) return <p>loading ...</p>;
+  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
   if (error) return <p>Error: {error.message}</p>;
   return (
     <>
@@ -40,13 +22,13 @@ const Artist = () => {
         <h1 className="py-4 text-[32px] font-bold">{name}</h1>
       </div>
       <div className="flex flex-wrap gap-2 max-sm:px-4">
-        {!isLoadingArtistReleases &&
-          detailedReleases?.map((item) => {
+        {!isLoading &&
+          (data?.releases || [])?.map((item, idx) => {
             return (
               <AlbumCard
-                data={item?.details}
+                releaseId={item.id}
                 key={item.id}
-                isLoading={isLoading}
+                delay={() => delay(idx * 50)}
               />
             );
           })}
