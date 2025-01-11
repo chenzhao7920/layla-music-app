@@ -8,13 +8,20 @@ import {
   FormControl,
   InputLabel,
   Button,
+  CircularProgress,
 } from "@mui/material";
 import { searchReleases, getMaster } from "../../api/discogsApi";
 import { genreList } from "../../utils/constant";
 import noCoverImg from "../../statics/images/no_cover_img.png";
 import crossImg from "../../statics/images/cross.svg";
 import { useQuery, useQueries } from "@tanstack/react-query";
-
+import {
+  getFavorites,
+  addToFavorites,
+  removeFromFavorites,
+} from "../../utils/favorite";
+import starImg from "../../statics/images/star.svg";
+import starActiveImg from "../../statics/images/star.active.svg";
 export default function Home() {
   const [page, setPage] = useState(1);
   const [year, setYear] = useState("2024");
@@ -84,7 +91,24 @@ export default function Home() {
     setOpen(false);
   };
 
-  if (isLoading) return <p> Loading ...</p>;
+  // favorites
+  const [favorites, setFavorites] = useState(getFavorites());
+  const toggleFavorite = (albumID) => {
+    if (favorites.includes(+albumID)) {
+      const updatedFavorites = removeFromFavorites(+albumID);
+      setFavorites(updatedFavorites);
+    } else {
+      const updatedFavorites = addToFavorites(+albumID);
+      setFavorites(updatedFavorites);
+    }
+  };
+
+  if (isLoading)
+    return (
+      <div className="flex flex-col h-screen items-center justify-center bg-slate-100">
+        <CircularProgress className="sm:w-16 sm:h-16 w-10 h-10" />
+      </div>
+    );
   if (error) return <p>Error: {error.message}</p>;
 
   return (
@@ -103,6 +127,15 @@ export default function Home() {
       </div>
       {/* filters */}
       <div className="flex flex-wrap gap-4 py-4 max-sm:px-4">
+        <div
+          className="flex items-center gap-2 px-4 py-2 font-medium text-white bg-green-600 rounded-full cursor-pointer"
+          onClick={() => {
+            initFilter();
+            setOpen(true);
+          }}
+        >
+          Filter +
+        </div>
         {!!genre &&
           tag(genre, () => {
             setGenre("");
@@ -115,15 +148,6 @@ export default function Home() {
           tag(year, () => {
             setYear("");
           })}
-        <div
-          className="flex items-center gap-2 px-4 py-2 font-medium text-white bg-gray-500 rounded-full cursor-pointer"
-          onClick={() => {
-            initFilter();
-            setOpen(true);
-          }}
-        >
-          Filter +
-        </div>
       </div>
       {/* list */}
       {!!data ? (
@@ -133,14 +157,14 @@ export default function Home() {
             return (
               <div
                 key={item.id}
-                className="flex w-full gap-8 p-10 overflow-hidden bg-white rounded-lg max-sm:flex-col drop-shadow-lg"
+                className="flex w-full gap-8 p-10 overflow-hidden bg-white rounded-lg sm:justify-between max-sm:flex-col drop-shadow-lg"
               >
                 <img
                   alt="cover_img"
                   className="w-40 h-40 rounded-full animate-spin-slow max-sm:self-center"
                   src={!!item.cover_image ? item.cover_image : noCoverImg}
                 ></img>
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col w-full gap-2">
                   <h3 className="font-semibold text-[24px] max-sm:text-center">
                     {item.title}
                   </h3>
@@ -192,6 +216,15 @@ export default function Home() {
                   <p>
                     <span className="font-medium">Year</span>: {item.year}
                   </p>
+                </div>
+                <div
+                  className="self-center place-self-center"
+                  onClick={() => toggleFavorite(item.id)}
+                >
+                  <img
+                    alt="like"
+                    src={favorites.includes(+item.id) ? starActiveImg : starImg}
+                  ></img>
                 </div>
               </div>
             );

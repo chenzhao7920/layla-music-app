@@ -2,7 +2,7 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getReleaseDetails } from "../../../api/discogsApi";
 const AlbumCard = ({ releaseId, delay }) => {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ["release_details", releaseId],
     queryFn: () => getReleaseDetails(releaseId),
     onSuccess: () => {
@@ -10,6 +10,7 @@ const AlbumCard = ({ releaseId, delay }) => {
     },
   });
   if (isLoading) return <p>loading...</p>;
+  if (error) return <></>;
   return (
     <div className="w-full sm:w-[336px] overflow-hidden bg-white rounded shadow-lg">
       <img
