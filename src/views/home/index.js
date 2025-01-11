@@ -39,6 +39,7 @@ export default function Home() {
       enabled: !!data, // Only fetch artist data if release data is available
     })),
   });
+
   const mappedArtistData = (data?.results || []).reduce((acc, item, index) => {
     const artistQuery = artistQueries[index];
     if (artistQuery?.data) {
