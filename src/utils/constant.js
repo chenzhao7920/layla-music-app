@@ -1,0 +1,15 @@
+export const genreList = [
+  "Electronic",
+  "Funk / Soul",
+  "Folk, World, & Country",
+  "Jazz",
+  "Latin",
+  "Hip Hop",
+  "Stage & Screen",
+  "Blues",
+  "Reggae",
+  "Non-Music",
+  "Classical",
+  "Children's",
+  "Brass & Military",
+];
