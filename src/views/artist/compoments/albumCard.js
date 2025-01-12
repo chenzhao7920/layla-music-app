@@ -2,14 +2,16 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getReleaseDetails } from "../../../api/discogsApi";
 const AlbumCard = ({ releaseId, delay }) => {
+  const delayedGetReleaseDetails = async () => {
+    await delay();
+    return getReleaseDetails(releaseId);
+  };
+
   const { data, isLoading, error } = useQuery({
     queryKey: ["release_details", releaseId],
-    queryFn: () => getReleaseDetails(releaseId),
-    onSuccess: () => {
-      delay(); // Delay of 2 seconds
-    },
+    queryFn: () => delayedGetReleaseDetails(releaseId),
   });
-  if (isLoading) return <p>loading...</p>;
+  if (isLoading) return <></>;
   if (error) return <></>;
   return (
     <div className="w-full sm:w-[336px] overflow-hidden bg-white rounded shadow-lg">

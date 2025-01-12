@@ -21,14 +21,14 @@ const Artist = () => {
         {" / "}
         <h1 className="py-4 text-[32px] font-bold">{name}</h1>
       </div>
-      <div className="flex flex-wrap gap-2 max-sm:px-4">
+      <div className="flex flex-wrap gap-2 mb-10 max-sm:px-4">
         {!isLoading &&
           (data?.releases || [])?.map((item, idx) => {
             return (
               <AlbumCard
                 releaseId={item?.main_release}
-                key={item.id}
-                delay={() => delay(idx * 50)}
+                key={idx}
+                delay={() => delay(idx * 500)}
               />
             );
           })}
