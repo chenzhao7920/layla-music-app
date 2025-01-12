@@ -113,18 +113,6 @@ export default function Home() {
 
   return (
     <>
-      {/* pagination */}
-      <div className="flex justify-start">
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 20]}
-          component="div"
-          count={data ? data.pagination.items : "-"}
-          rowsPerPage={rowsPerPage}
-          page={page - 1}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </div>
       {/* filters */}
       <div className="flex flex-wrap gap-4 py-4 max-sm:px-4">
         <div
@@ -148,6 +136,18 @@ export default function Home() {
           tag(year, () => {
             setYear("");
           })}
+      </div>
+      {/* pagination */}
+      <div className="flex justify-end">
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 20]}
+          component="div"
+          count={data ? data.pagination.items : "-"}
+          rowsPerPage={rowsPerPage}
+          page={page - 1}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </div>
       {/* list */}
       {!!data ? (

@@ -26,7 +26,7 @@ const Artist = () => {
           (data?.releases || [])?.map((item, idx) => {
             return (
               <AlbumCard
-                releaseId={item.id}
+                releaseId={item?.main_release}
                 key={item.id}
                 delay={() => delay(idx * 50)}
               />
