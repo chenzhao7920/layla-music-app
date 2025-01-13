@@ -52,7 +52,7 @@ export default function Home() {
     if (artistQuery?.data) {
       acc[item.id] = artistQuery.data.artists; // Map `item.id` to the `artists` array
     } else {
-      acc[item.id] = []; // Default to an empty array while loading
+      acc[item.id] = [];
     }
     return acc;
   }, {});
