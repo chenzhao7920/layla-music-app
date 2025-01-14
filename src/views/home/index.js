@@ -1,18 +1,7 @@
 import React, { useState } from "react";
-import {
-  TablePagination,
-  Drawer,
-  TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Button,
-  CircularProgress,
-} from "@mui/material";
+import { TablePagination, Button, CircularProgress } from "@mui/material";
 import { searchReleases, getMaster } from "../../api/discogsApi";
-import { genreList } from "../../utils/constant";
-import noCoverImg from "../../statics/images/no_cover_img.png";
+import { genreOptions, countryOptions } from "../../utils/constant";
 import crossImg from "../../statics/images/cross.svg";
 import { useQuery, useQueries } from "@tanstack/react-query";
 import {
@@ -20,8 +9,9 @@ import {
   addToFavorites,
   removeFromFavorites,
 } from "../../utils/favorite";
-import starImg from "../../statics/images/star.svg";
-import starActiveImg from "../../statics/images/star.active.svg";
+import SelectField from "./components/selectField";
+import HomeAlbumCard from "./components/homeAlbumCard";
+
 export default function Home() {
   const [page, setPage] = useState(1);
   const [year, setYear] = useState("2024");
@@ -29,10 +19,19 @@ export default function Home() {
   const [genre, setGenre] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(5);
   //filter drawer
-  const [open, setOpen] = useState(false);
   const [yearF, setYearF] = useState("");
   const [countryF, setCountryF] = useState("");
   const [genreF, setGenreF] = useState("");
+
+  const yearOptions = React.useMemo(() => {
+    const yearOptions = [];
+    const startYear = 1900;
+    const endYear = new Date().getFullYear();
+    for (let year = endYear; year >= startYear; year--) {
+      yearOptions.push({ value: year, label: `${year}` });
+    }
+    return yearOptions;
+  }, []);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["releases", country, year, genre, page, rowsPerPage],
@@ -68,7 +67,7 @@ export default function Home() {
   // filter
   const tag = (txt, onClose) => {
     return (
-      <div className="flex items-center gap-2 px-4 py-2 bg-gray-500 rounded-full">
+      <div className="flex items-center gap-2 px-4 py-2 bg-gray-400 rounded-full">
         <div className="font-medium text-white">{txt}</div>
         <img
           alt="cross"
@@ -79,19 +78,27 @@ export default function Home() {
       </div>
     );
   };
-  const initFilter = () => {
-    setYearF(year);
-    setCountryF(country);
-    setGenreF(genre);
+
+  React.useEffect(() => {
+    const initFilter = () => {
+      setYearF(year);
+      setCountryF(country);
+      setGenreF(genre);
+    };
+    initFilter();
+  }, [country, genre, year]);
+
+  const cleanFilter = () => {
+    setYear();
+    setCountry();
+    setGenre();
   };
   const submitFilter = () => {
     setYear(yearF);
     setCountry(countryF);
     setGenre(genreF);
-    setOpen(false);
   };
 
-  // favorites
   const [favorites, setFavorites] = useState(getFavorites());
   const toggleFavorite = (albumID) => {
     if (favorites.includes(+albumID)) {
@@ -112,170 +119,106 @@ export default function Home() {
   if (error) return <p>Error: {error.message}</p>;
 
   return (
-    <>
-      {/* filters */}
-      <div className="flex flex-wrap gap-4 py-4 max-sm:px-4">
-        <div
-          className="flex items-center gap-2 px-4 py-2 font-medium text-white bg-green-600 rounded-full cursor-pointer"
-          onClick={() => {
-            initFilter();
-            setOpen(true);
-          }}
-        >
-          Filter +
-        </div>
-        {!!genre &&
-          tag(genre, () => {
-            setGenre("");
-          })}
-        {!!country &&
-          tag(country, () => {
-            setCountry("");
-          })}
-        {!!year &&
-          tag(year, () => {
-            setYear("");
-          })}
-      </div>
-      {/* pagination */}
-      <div className="flex justify-end">
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 20]}
-          component="div"
-          count={data ? data.pagination.items : "-"}
-          rowsPerPage={rowsPerPage}
-          page={page - 1}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </div>
-      {/* list */}
-      {!!data ? (
-        <div className="flex flex-col gap-4 py-4">
-          {data.results.map((item) => {
-            const artists = mappedArtistData[item.id] || [];
-            return (
-              <div
-                key={item.id}
-                className="flex w-full gap-8 p-10 overflow-hidden bg-white rounded-lg sm:justify-between max-sm:flex-col drop-shadow-lg"
-              >
-                <img
-                  alt="cover_img"
-                  className="w-40 h-40 rounded-full animate-spin-slow max-sm:self-center"
-                  src={!!item.cover_image ? item.cover_image : noCoverImg}
-                ></img>
-                <div className="flex flex-col w-full gap-2">
-                  <h3 className="font-semibold text-[24px] max-sm:text-center">
-                    {item.title}
-                  </h3>
-                  <div className="flex gap-2 max-sm:self-center">
-                    <div className="flex flex-col overflow-hidden rounded-t-md">
-                      <div className="flex items-center justify-center px-2 text-white bg-black">
-                        Have
-                      </div>
-                      <div className="flex items-center justify-center px-2 border">
-                        {item.community?.have}
-                      </div>
-                    </div>
-                    <div className="flex flex-col overflow-hidden rounded-t-md">
-                      <div className="flex items-center justify-center px-2 text-white bg-black">
-                        Want
-                      </div>
-                      <div className="flex items-center justify-center px-2 border">
-                        {item.community?.want}
-                      </div>
-                    </div>
-                  </div>
-                  <p>
-                    <span className="font-medium">Artists</span>:{" "}
-                    {artists.length > 0
-                      ? artists.map((a, index) => (
-                          <a
-                            key={index}
-                            href={"/artist/" + a.id + "/" + a.name}
-                            className="underline"
-                          >
-                            {a.name}
-                            {/* Add a comma unless it's the last artist */}
-                            {index < artists.length - 1 && ", "}{" "}
-                          </a>
-                        ))
-                      : "-"}
-                  </p>
-                  <p>
-                    <span className="font-medium">Format</span>:{" "}
-                    {item.format?.join(", ")}
-                  </p>
-                  <p>
-                    <span className="font-medium">Genre</span>:{" "}
-                    {item.genre?.join(", ")}
-                  </p>
-                  <p>
-                    <span className="font-medium">Country</span>: {item.country}
-                  </p>
-                  <p>
-                    <span className="font-medium">Year</span>: {item.year}
-                  </p>
-                </div>
-                <div
-                  className="self-center place-self-center"
-                  onClick={() => toggleFavorite(item.id)}
-                >
-                  <img
-                    alt="like"
-                    src={favorites.includes(+item.id) ? starActiveImg : starImg}
-                  ></img>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      ) : (
-        //loading
-        <div></div>
-      )}
-      {/* filter drawer */}
-      <Drawer
-        open={open}
-        onClose={() => {
-          initFilter();
-          setOpen(false);
-        }}
-      >
-        <div className="flex flex-col gap-4 p-4 sm:p-10">
-          <FormControl fullWidth>
-            <InputLabel id="genre-select-label">Genre</InputLabel>
-            <Select
-              labelId="genre-select-label"
-              id="genre-select"
-              value={genreF}
-              onChange={(event) => setGenreF(event.target.value)}
-              label="Genre"
-            >
-              {genreList.map((genre, index) => (
-                <MenuItem key={index} value={genre}>
-                  {genre}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <TextField
-            label="Country"
-            variant="outlined"
-            value={countryF}
-            onChange={(e) => setCountryF(e.target.value)}
+    <div className="flex flex-col md:flex-row w-full gap-6 p-4 bg-gray-50 sm:flex-">
+      {/* filters Section */}
+      <div className="flex-shrink-0 w-full md:w-64">
+        <div className="bg-white rounded-lg shadow sticky top-0">
+          <div className="border-b border-gray-200 w-full p-4 ">
+            <h2 className="text-lg text-gray-600">Refine your Search</h2>
+          </div>
+          <SelectField
+            title="Genre"
+            options={genreOptions}
+            //value={genre}
+            onSelectionChange={(value) => {
+              setGenreF(value);
+            }}
+            searchPlaceholder="Search Category"
+            defaultExpanded={false}
           />
-          <TextField
-            label="Year"
-            variant="outlined"
-            value={yearF}
-            onChange={(e) => setYearF(e.target.value)}
+          <SelectField
+            title="Country"
+            options={countryOptions}
+            //value={country}
+            onSelectionChange={(value) => {
+              setCountryF(value);
+            }}
+            searchPlaceholder="Search Country"
           />
-          <Button className="self-center" onClick={submitFilter}>
-            Submit
-          </Button>
+          <SelectField
+            title="Year"
+            options={yearOptions}
+            onSelectionChange={(value) => {
+              setYearF(value);
+            }}
+            searchPlaceholder="Search Year"
+            //value={year}
+          />
+          <div className="border-b border-gray-200 p-4 flex flex-row justify-center ">
+            <Button className="flex self-center" onClick={submitFilter}>
+              Submit
+            </Button>
+          </div>
         </div>
-      </Drawer>
-    </>
+      </div>
+      <div className="flex-1">
+        {/* filters */}
+        <div className="flex flex-wrap gap-4 py-4 max-sm:px-4">
+          {!!genre &&
+            tag(genre, () => {
+              setGenre("");
+            })}
+          {!!country &&
+            tag(country, () => {
+              setCountry("");
+            })}
+          {!!year &&
+            tag(year, () => {
+              setYear("");
+            })}
+          <div
+            className="flex items-center gap-2 px-4 py-2 font-medium text-gray-600 bg-gray-100 rounded-full cursor-pointer"
+            onClick={() => {
+              cleanFilter();
+            }}
+          >
+            Clean all
+          </div>
+        </div>
+
+        {/* pagination */}
+        <div className="flex justify-end">
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 20]}
+            component="div"
+            count={data ? data.pagination.items : "-"}
+            rowsPerPage={rowsPerPage}
+            page={page - 1}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </div>
+        {/* list */}
+        {!!data ? (
+          <div className="flex flex-col gap-4 py-4">
+            {data.results.map((item) => {
+              const artists = mappedArtistData[item.id] || [];
+              return (
+                <HomeAlbumCard
+                  key={item.id}
+                  album={item}
+                  artists={artists}
+                  favorites={favorites}
+                  toggleFavorite={toggleFavorite}
+                />
+              );
+            })}
+          </div>
+        ) : (
+          //loading
+          <div></div>
+        )}
+      </div>
+    </div>
   );
 }

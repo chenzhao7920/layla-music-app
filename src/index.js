@@ -9,7 +9,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000,
+      staleTime: 60 * 60 * 1000,
       cacheTime: 10 * 60 * 1000,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
