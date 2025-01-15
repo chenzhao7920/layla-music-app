@@ -11,7 +11,7 @@ import {
 } from "../../utils/favorite";
 import SelectField from "./components/selectField";
 import HomeAlbumCard from "./components/homeAlbumCard";
-
+import OPPS from "../../components/opps";
 export default function Home() {
   const [page, setPage] = useState(1);
   const [year, setYear] = useState("2024");
@@ -116,8 +116,7 @@ export default function Home() {
         <CircularProgress className="sm:w-16 sm:h-16 w-10 h-10" />
       </div>
     );
-  if (error) return <p>Error: {error.message}</p>;
-
+  if (error) return <OPPS />;
   return (
     <div className="flex flex-col md:flex-row w-full gap-6 p-4 bg-gray-50 sm:flex-">
       {/* filters Section */}

@@ -22,7 +22,9 @@ function App() {
           >
             <div className="absolute inset-0 bg-gradient-to-b from-[#31312f]/10 to-[#31312f]/30"></div>
             <div className="relative z-10">
-              <h1 className="text-5xl font-bold leading-tight">Search Music</h1>
+              <h1 className="text-5xl font-bold leading-tight">
+                Layla Music Search
+              </h1>
               <p className="text-2xl font-light mt-4 max-w-2xl">
                 Discover a song you will love
               </p>

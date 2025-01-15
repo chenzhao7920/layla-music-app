@@ -1,7 +1,7 @@
 import noCoverImg from "../../../statics/images/no_cover_img.png";
-import starActiveImg from "../../../statics/images/star.active.svg";
-import starImg from "../../../statics/images/star.svg";
-const HomeAlbumCard = ({ album, artists, favorites, toggleFavorite }) => {
+import FavoriteButton from "../../../components/favoriateButton";
+import MuiLink from "../../../components/muiLink";
+const HomeAlbumCard = ({ album, artists }) => {
   return (
     <div
       key={album.id}
@@ -64,14 +64,9 @@ const HomeAlbumCard = ({ album, artists, favorites, toggleFavorite }) => {
           <span className="font-medium">Year</span>: {album.year}
         </p>
       </div>
-      <div
-        className="self-center place-self-center"
-        onClick={() => toggleFavorite(album.id)}
-      >
-        <img
-          alt="like"
-          src={favorites.includes(+album.id) ? starActiveImg : starImg}
-        ></img>
+      <div className="flex items-center">
+        <FavoriteButton type="album" id={album.id} />
+        <MuiLink url={"/album/" + album?.id + "/" + album?.title} />
       </div>
     </div>
   );

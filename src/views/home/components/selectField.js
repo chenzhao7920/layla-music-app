@@ -21,7 +21,6 @@ const SelectField = ({
   };
 
   const toggleOption = (optionValue) => {
-    console.log("selected", selected);
     let newSelected;
     if (multiple) {
       newSelected = selected?.includes(optionValue)
