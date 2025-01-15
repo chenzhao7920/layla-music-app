@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ChevronDown, ChevronUp, Search } from "lucide-react";
 
 const SelectField = ({
@@ -10,10 +10,20 @@ const SelectField = ({
   defaultExpanded = false,
   showCounts = true,
   className = "",
+  value = [],
 }) => {
   const [expanded, setExpanded] = useState(defaultExpanded);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selected, setSelected] = useState([]);
+  const [selected, setSelected] = useState(
+    Array.isArray(value) ? value : [value]
+  );
+  useEffect(() => {
+    console.log("value", value);
+    if (value !== undefined) {
+      setSelected(Array.isArray(value) ? value : [value]);
+    }
+  }, [value]);
+
   const toggleExpanded = () => setExpanded(!expanded);
 
   const handleSearch = (e) => {
@@ -30,7 +40,7 @@ const SelectField = ({
       newSelected = selected?.includes(optionValue) ? [] : [optionValue];
     }
     setSelected(newSelected);
-    onSelectionChange?.(newSelected);
+    onSelectionChange?.(multiple ? newSelected : newSelected[0]);
   };
 
   const filteredOptions = options.filter((option) =>

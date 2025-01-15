@@ -13,9 +13,14 @@ const HomeAlbumCard = ({ album, artists }) => {
         src={!!album.cover_image ? album.cover_image : noCoverImg}
       ></img>
       <div className="flex flex-col w-full gap-2">
-        <h3 className="font-semibold text-[24px] max-sm:text-center">
-          {album.title}
-        </h3>
+        <a
+          href={"/album/" + album?.id + "/" + album?.title}
+          className="underline"
+        >
+          <h3 className="font-semibold text-[24px] max-sm:text-center">
+            {album.title}
+          </h3>
+        </a>
         <div className="flex gap-2 max-sm:self-center">
           <div className="flex flex-col overflow-hidden rounded-t-md">
             <div className="flex items-center justify-center px-2 text-white bg-black">

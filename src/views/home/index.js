@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TablePagination, Button, CircularProgress } from "@mui/material";
 import { searchReleases, getMaster } from "../../api/discogsApi";
 import { genreOptions, countryOptions } from "../../utils/constant";
@@ -11,13 +11,20 @@ import {
 } from "../../utils/favorite";
 import SelectField from "./components/selectField";
 import HomeAlbumCard from "./components/homeAlbumCard";
-import OPPS from "../../components/opps";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 export default function Home() {
-  const [page, setPage] = useState(1);
-  const [year, setYear] = useState("2024");
-  const [country, setCountry] = useState("Canada");
-  const [genre, setGenre] = useState("");
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const [page, setPage] = useState(() => Number(searchParams.get("page")) || 1);
+  const [year, setYear] = useState(() => searchParams.get("year") || "2024");
+  const [country, setCountry] = useState(
+    () => searchParams.get("country") || "Canada"
+  );
+  const [genre, setGenre] = useState(() => searchParams.get("genre") || "");
+  const [rowsPerPage, setRowsPerPage] = useState(
+    () => Number(searchParams.get("rowsPerPage")) || 5
+  );
   //filter drawer
   const [yearF, setYearF] = useState("");
   const [countryF, setCountryF] = useState("");
@@ -28,7 +35,7 @@ export default function Home() {
     const startYear = 1900;
     const endYear = new Date().getFullYear();
     for (let year = endYear; year >= startYear; year--) {
-      yearOptions.push({ value: year, label: `${year}` });
+      yearOptions.push({ value: `${year}`, label: `${year}` });
     }
     return yearOptions;
   }, []);
@@ -37,6 +44,22 @@ export default function Home() {
     queryKey: ["releases", country, year, genre, page, rowsPerPage],
     queryFn: () => searchReleases({ country, year, genre, page, rowsPerPage }),
   });
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (year) params.set("year", year);
+    if (country) params.set("country", country);
+    if (genre) params.set("genre", genre);
+    if (page !== 1) params.set("page", page.toString());
+    if (rowsPerPage !== 5) params.set("rowsPerPage", rowsPerPage.toString());
+
+    navigate(
+      {
+        pathname: location.pathname,
+        search: params.toString(),
+      },
+      { replace: true }
+    );
+  }, [year, country, genre, page, rowsPerPage, location.pathname, navigate]);
 
   const artistQueries = useQueries({
     queries: (data?.results || []).map((item) => ({
@@ -116,7 +139,7 @@ export default function Home() {
         <CircularProgress className="sm:w-16 sm:h-16 w-10 h-10" />
       </div>
     );
-  if (error) return <OPPS />;
+  if (error) return <>s</>;
   return (
     <div className="flex flex-col md:flex-row w-full gap-6 p-4 bg-gray-50 sm:flex-">
       {/* filters Section */}
@@ -128,7 +151,7 @@ export default function Home() {
           <SelectField
             title="Genre"
             options={genreOptions}
-            //value={genre}
+            value={genre}
             onSelectionChange={(value) => {
               setGenreF(value);
             }}
@@ -138,7 +161,7 @@ export default function Home() {
           <SelectField
             title="Country"
             options={countryOptions}
-            //value={country}
+            value={country}
             onSelectionChange={(value) => {
               setCountryF(value);
             }}
@@ -147,11 +170,11 @@ export default function Home() {
           <SelectField
             title="Year"
             options={yearOptions}
+            value={year}
             onSelectionChange={(value) => {
               setYearF(value);
             }}
             searchPlaceholder="Search Year"
-            //value={year}
           />
           <div className="border-b border-gray-200 p-4 flex flex-row justify-center ">
             <Button className="flex self-center" onClick={submitFilter}>
