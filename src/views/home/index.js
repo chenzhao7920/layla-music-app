@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { TablePagination, Button, CircularProgress } from "@mui/material";
-import { searchReleases, getMaster } from "../../api/discogsApi";
+import { searchReleases, getMaster } from "../../api/discogs/discogsApi";
 import { genreOptions, countryOptions } from "../../utils/constant";
 import crossImg from "../../statics/images/cross.svg";
 import { useQuery, useQueries } from "@tanstack/react-query";
@@ -29,7 +29,7 @@ export default function Home() {
   const [yearF, setYearF] = useState("");
   const [countryF, setCountryF] = useState("");
   const [genreF, setGenreF] = useState("");
-
+  const [searchTriggered, setSearchTriggered] = useState(false);
   const yearOptions = React.useMemo(() => {
     const yearOptions = [];
     const startYear = 1900;
@@ -45,21 +45,29 @@ export default function Home() {
     queryFn: () => searchReleases({ country, year, genre, page, rowsPerPage }),
   });
   useEffect(() => {
-    const params = new URLSearchParams();
-    if (year) params.set("year", year);
-    if (country) params.set("country", country);
-    if (genre) params.set("genre", genre);
-    if (page !== 1) params.set("page", page.toString());
-    if (rowsPerPage !== 5) params.set("rowsPerPage", rowsPerPage.toString());
+    if (searchTriggered) {
+      const params = new URLSearchParams();
+      if (year) params.set("year", year);
+      if (country) params.set("country", country);
+      if (genre) params.set("genre", genre);
+      if (page !== 1) params.set("page", page.toString());
+      if (rowsPerPage !== 5) params.set("rowsPerPage", rowsPerPage.toString());
 
-    navigate(
-      {
-        pathname: location.pathname,
-        search: params.toString(),
-      },
-      { replace: true }
-    );
-  }, [year, country, genre, page, rowsPerPage, location.pathname, navigate]);
+      navigate(
+        { pathname: location.pathname, search: params.toString() },
+        { replace: true }
+      );
+    }
+  }, [
+    year,
+    country,
+    genre,
+    page,
+    rowsPerPage,
+    location.pathname,
+    navigate,
+    searchTriggered,
+  ]);
 
   const artistQueries = useQueries({
     queries: (data?.results || []).map((item) => ({
@@ -154,6 +162,7 @@ export default function Home() {
             value={genre}
             onSelectionChange={(value) => {
               setGenreF(value);
+              setSearchTriggered(true);
             }}
             searchPlaceholder="Search Category"
             defaultExpanded={false}
@@ -164,6 +173,7 @@ export default function Home() {
             value={country}
             onSelectionChange={(value) => {
               setCountryF(value);
+              setSearchTriggered(true);
             }}
             searchPlaceholder="Search Country"
           />
@@ -173,6 +183,7 @@ export default function Home() {
             value={year}
             onSelectionChange={(value) => {
               setYearF(value);
+              setSearchTriggered(true);
             }}
             searchPlaceholder="Search Year"
           />

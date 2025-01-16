@@ -2,7 +2,7 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import Skeleton from "react-loading-skeleton";
 import FavoriteButton from "../../../components/favoriateButton";
-import { getReleaseDetails } from "../../../api/discogsApi";
+import { getReleaseDetails } from "../../../api/discogs/discogsApi";
 
 const AlbumCard = ({ releaseId, delay }) => {
   const delayedGetReleaseDetails = async () => {

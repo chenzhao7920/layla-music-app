@@ -1,5 +1,5 @@
 import React from "react";
-import { getArtistReleases } from "../../api/discogsApi";
+import { getArtistReleases } from "../../api/discogs/discogsApi";
 import AlbumCard from "./compoments/albumCard";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";

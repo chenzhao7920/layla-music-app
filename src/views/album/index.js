@@ -1,5 +1,5 @@
 import React from "react";
-import { getMaster } from "../../api/discogsApi";
+import { getMaster } from "../../api/discogs/discogsApi";
 import { useQuery } from "@tanstack/react-query";
 import FavoriteButton from "../../components/favoriateButton";
 import { useParams } from "react-router-dom";
