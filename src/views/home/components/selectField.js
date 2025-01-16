@@ -18,7 +18,6 @@ const SelectField = ({
     Array.isArray(value) ? value : [value]
   );
   useEffect(() => {
-    console.log("value", value);
     if (value !== undefined) {
       setSelected(Array.isArray(value) ? value : [value]);
     }

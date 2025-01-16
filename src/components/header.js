@@ -1,9 +1,19 @@
-// src/components/Header.js
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
-
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { signOutUser } from "../redux/reducers/authReducer";
 const Header = () => {
   const user = useSelector((state) => state.auth?.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    try {
+      await dispatch(signOutUser()).unwrap();
+      navigate("/auth/signin");
+    } catch (error) {
+      console.error("Sign out failed:", error);
+    }
+  };
 
   return (
     <div
@@ -26,14 +36,14 @@ const Header = () => {
           <div>
             {user ? (
               <Link
-                //onClick={handleSignOut}
+                onClick={handleSignOut}
                 className="px-2 py-1 rounded text-white bg-yellow-600 hover:bg-yellow-700 transition"
               >
                 Sign Out
               </Link>
             ) : (
               <Link
-                //onClick={handleSignIn}
+                to={"/auth/signin"}
                 className="px-2 py-1 rounded text-white bg-blue-600 hover:bg-blue-800 transition"
               >
                 Sign In
