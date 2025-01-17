@@ -69,18 +69,43 @@ export const authSlice = createSlice({
       state.error = null;
       const { uid, email, accessToken } = action.payload;
       state.user = { uid, email, accessToken };
+      // Store in localStorage
+      localStorage.setItem("layla_access_token", accessToken);
+      localStorage.setItem("layla_user", JSON.stringify({ uid, email }));
     },
     loginFailure: (state, action) => {
       state.error = action.payload;
       state.loading = false;
       state.isAuthenticated = false;
+      // Clear localStorage on failure
+      localStorage.removeItem("layla_access_token");
+      localStorage.removeItem("layla_user");
     },
     logout: (state) => {
       state.user = null;
       state.isAuthenticated = false;
       state.error = null;
-      // Clear stored token on logout
+      // Clear stored data on logout
       localStorage.removeItem("layla_access_token");
+      localStorage.removeItem("layla_user");
+    },
+    restoreSession: (state) => {
+      const storedToken = localStorage.getItem("layla_access_token");
+      const storedUser = localStorage.getItem("layla_user");
+
+      if (storedToken && storedUser) {
+        try {
+          const user = JSON.parse(storedUser);
+          state.user = { ...user, storedToken };
+          state.isAuthenticated = true;
+          state.loading = false;
+        } catch (error) {
+          state.error = "Failed to restore session";
+          state.isAuthenticated = false;
+          localStorage.removeItem("layla_access_token");
+          localStorage.removeItem("layla_user");
+        }
+      }
     },
   },
 });
@@ -93,8 +118,13 @@ const transformFirebaseUser = (user) => ({
   providerId: user.providerId,
 });
 // Actions
-export const { loginStart, loginSuccess, loginFailure, logout } =
-  authSlice.actions;
+export const {
+  loginStart,
+  loginSuccess,
+  loginFailure,
+  logout,
+  restoreSession,
+} = authSlice.actions;
 
 // Export reducer
 export default authSlice.reducer;

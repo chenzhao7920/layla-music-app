@@ -40,16 +40,16 @@ const Album = () => {
             <p>
               <span className="font-medium">Artists</span>:{" "}
               {data?.artists?.length > 0
-                ? data?.artists.map((a, index) => (
-                    <a
-                      key={index}
-                      href={"/artist/" + a.id + "/" + a.name}
+                ? data?.artists.map((a, idx) => (
+                    <Link
+                      key={idx}
+                      to={"/artist/" + a.id + "/" + a.name}
                       className="underline"
                     >
                       {a.name}
                       {/* Add a comma unless it's the last artist */}
-                      {index < data?.artists.length - 1 && ", "}{" "}
-                    </a>
+                      {idx < data?.artists.length - 1 && ", "}{" "}
+                    </Link>
                   ))
                 : "-"}
             </p>
@@ -74,8 +74,11 @@ const Album = () => {
           <h3 className="font-semibold text-[24px] max-sm:text-center">
             Tracklist
           </h3>
-          {data?.tracklist?.map((item) => (
-            <div className="flex w-full p-3 square-sm justify-between bg-slate-100 gap-4">
+          {data?.tracklist?.map((item, idx) => (
+            <div
+              key={idx}
+              className="flex w-full p-3 square-sm justify-between bg-slate-100 gap-4"
+            >
               <p>
                 {item.position} / {item.title}
               </p>

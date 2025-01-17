@@ -1,25 +1,13 @@
-import React, { lazy, Suspense } from "react";
-import { Routes, Route, Navigate, Outlet } from "react-router-dom";
-import { useSelector } from "react-redux";
+import React, { lazy } from "react";
+import { Routes, Route } from "react-router-dom";
 import SignIn from "../views/signin";
 import SignUp from "../views/signup";
+import ProtectedLayout from "../components/protextedLayout";
+
 const Home = lazy(() => import("../views/home"));
 const Album = lazy(() => import("../views/album"));
 const Artist = lazy(() => import("../views/artist"));
 
-const ProtectedLayout = () => {
-  const { user, loading } = useSelector((state) => state.auth);
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-  return user ? (
-    <Suspense fallback={<div>Loading...</div>}>
-      <Outlet />
-    </Suspense>
-  ) : (
-    <Navigate to="/auth/signin" replace />
-  );
-};
 const routes = () => {
   return (
     <Routes>

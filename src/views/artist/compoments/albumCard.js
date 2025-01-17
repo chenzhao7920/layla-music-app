@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import Skeleton from "react-loading-skeleton";
 import FavoriteButton from "../../../components/favoriateButton";
 import { getReleaseDetails } from "../../../api/discogs/discogsApi";
+import { CircularProgress } from "@mui/material";
 
 const AlbumCard = ({ releaseId, delay }) => {
   const delayedGetReleaseDetails = async () => {
@@ -24,10 +25,11 @@ const AlbumCard = ({ releaseId, delay }) => {
         <>
           <Skeleton height={256} />
           <div className="p-4">
-            <Skeleton height={24} width="70%" />
-            <Skeleton height={20} width="50%" className="mt-2" />
-            <Skeleton height={16} width="40%" className="mt-2" />
-            <Skeleton height={80} className="mt-4" />
+            <Skeleton height={256} className="mt-4" />
+            <div className="flex flex-col items-center justify-center">
+              <CircularProgress className="sm:w-16 sm:h-16 w-5 h-5 " />
+            </div>
+            <Skeleton height={20} width="50%" className="mt-2  bg-slate-100" />
           </div>
         </>
       ) : (
