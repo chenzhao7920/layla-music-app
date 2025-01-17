@@ -21,7 +21,7 @@ const SelectField = ({
     if (value !== undefined) {
       setSelected(Array.isArray(value) ? value : [value]);
     }
-  }, [value]);
+  }, [value, setSelected]);
 
   const toggleExpanded = () => setExpanded(!expanded);
 

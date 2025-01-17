@@ -40,10 +40,7 @@ export default function Home() {
     return yearOptions;
   }, []);
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["releases", country, year, genre, page, rowsPerPage],
-    queryFn: () => searchReleases({ country, year, genre, page, rowsPerPage }),
-  });
+  // URL search querys
   useEffect(() => {
     if (searchTriggered) {
       const params = new URLSearchParams();
@@ -69,6 +66,12 @@ export default function Home() {
     searchTriggered,
   ]);
 
+  // fetching Data
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["releases", country, year, genre, page, rowsPerPage],
+    queryFn: () => searchReleases({ country, year, genre, page, rowsPerPage }),
+    retry: 5,
+  });
   const artistQueries = useQueries({
     queries: (data?.results || []).map((item) => ({
       queryKey: ["master", item.master_id],
@@ -95,7 +98,7 @@ export default function Home() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(1);
   };
-  // filter
+  // tag generater
   const tag = (txt, onClose) => {
     return (
       <div className="flex items-center gap-2 px-4 py-2 bg-gray-400 rounded-full">
@@ -110,7 +113,7 @@ export default function Home() {
     );
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     const initFilter = () => {
       setYearF(year);
       setCountryF(country);
@@ -120,16 +123,16 @@ export default function Home() {
   }, [country, genre, year]);
 
   const cleanFilter = () => {
-    setYear();
-    setCountry();
-    setGenre();
+    setYear("");
+    setCountry("");
+    setGenre("");
   };
   const submitFilter = () => {
     setYear(yearF);
     setCountry(countryF);
     setGenre(genreF);
   };
-
+  // handle favorites
   const [favorites, setFavorites] = useState(getFavorites());
   const toggleFavorite = (albumID) => {
     if (favorites.includes(+albumID)) {
@@ -147,7 +150,7 @@ export default function Home() {
         <CircularProgress className="sm:w-16 sm:h-16 w-10 h-10" />
       </div>
     );
-  if (error) return <>s</>;
+  if (error) return <></>;
   return (
     <div className="flex flex-col md:flex-row w-full gap-6 p-4 bg-gray-50 sm:flex-">
       {/* filters Section */}
