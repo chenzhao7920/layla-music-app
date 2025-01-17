@@ -3,7 +3,7 @@ import React, { useState, useRef } from "react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { Popper, Paper } from "@mui/material";
 import { Link } from "react-router-dom";
-const MuiLink = React.memo(({ url, ...rest }) => {
+const MuiLink = React.memo(({ path, ...rest }) => {
   const [open, setOpen] = useState(false);
   const buttonRef = useRef(null);
   const handleMouseEnter = () => {
@@ -16,7 +16,7 @@ const MuiLink = React.memo(({ url, ...rest }) => {
     <>
       <Link
         ref={buttonRef}
-        to={url}
+        to={path}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         className="p-2 rounded-full hover:bg-gray-100 transition-colors"

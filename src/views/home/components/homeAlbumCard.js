@@ -1,5 +1,6 @@
 import noCoverImg from "../../../statics/images/no_cover_img.png";
 import FavoriteButton from "../../../components/favoriateButton";
+import { Link } from "react-router-dom";
 import MuiLink from "../../../components/muiLink";
 const HomeAlbumCard = ({ album, artists }) => {
   return (
@@ -13,14 +14,14 @@ const HomeAlbumCard = ({ album, artists }) => {
         src={!!album.cover_image ? album.cover_image : noCoverImg}
       ></img>
       <div className="flex flex-col w-full gap-2">
-        <a
-          href={"/album/" + album?.id + "/" + album?.title}
+        <Link
+          to={"/album/" + album?.id + "/" + album?.title}
           className="underline"
         >
           <h3 className="font-semibold text-[24px] max-sm:text-center">
             {album.title}
           </h3>
-        </a>
+        </Link>
         <div className="flex gap-2 max-sm:self-center">
           <div className="flex flex-col overflow-hidden rounded-t-md">
             <div className="flex items-center justify-center px-2 text-white bg-black">
@@ -43,15 +44,15 @@ const HomeAlbumCard = ({ album, artists }) => {
           <span className="font-medium">Artists</span>:{" "}
           {artists?.length > 0
             ? artists.map((a, index) => (
-                <a
+                <Link
                   key={index}
-                  href={"/artist/" + a.id + "/" + a.name}
+                  to={"/artist/" + a.id + "/" + a.name}
                   className="underline"
                 >
                   {a.name}
                   {/* Add a comma unless it's the last artist */}
                   {index < artists.length - 1 && ", "}{" "}
-                </a>
+                </Link>
               ))
             : "-"}
         </p>
@@ -71,7 +72,7 @@ const HomeAlbumCard = ({ album, artists }) => {
       </div>
       <div className="flex items-center">
         <FavoriteButton type="album" id={album.id} />
-        <MuiLink url={"/album/" + album?.id + "/" + album?.title} />
+        <MuiLink path={"/album/" + album?.id + "/" + album?.title} />
       </div>
     </div>
   );

@@ -2,7 +2,7 @@ import React from "react";
 import { getMaster } from "../../api/discogs/discogsApi";
 import { useQuery } from "@tanstack/react-query";
 import FavoriteButton from "../../components/favoriateButton";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 
 const Album = () => {
   const { album_id, title } = useParams();
@@ -16,9 +16,9 @@ const Album = () => {
       <>
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <a href="/" className="hover:underline max-sm:px-4">
+            <Link to="/" className="hover:underline max-sm:px-4">
               Homepage
-            </a>
+            </Link>
             {" / "}
             <h1 className="py-4 text-[32px] font-bold">{title}</h1>
           </div>
