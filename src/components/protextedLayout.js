@@ -1,6 +1,6 @@
 import React, { Suspense, useEffect, useState } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { restoreSession } from "../redux/reducers/authReducer";
 const ProtectedLayout = React.memo(() => {
   const [isAuthorized, setIsAuthorized] = useState(false);
