@@ -1,3 +1,13 @@
+/**
+ * OPPS component
+ * - A functional component that displays an error or unexpected situation.
+ * - Provides functionality to refresh the current page or navigate to a specific location.
+ *
+ * Hooks:
+ * @useNavigate - Used for programmatic navigation.
+ * @useLocation - Provides information about the current location.
+ */
+
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 const OPPS = () => {

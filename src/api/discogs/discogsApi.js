@@ -1,3 +1,10 @@
+/**
+ * Discogs API Client and Utility Functions
+ *
+ * This module provides utility functions for interacting with the Discogs API.
+ * It includes methods for searching releases, fetching artist releases, retrieving
+ * release details, and getting master release information.
+ */
 import axios from "axios";
 import { DISCOGS_API_CONFIG, DEFAULT_HEADERS } from "./config";
 

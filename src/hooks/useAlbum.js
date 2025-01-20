@@ -1,5 +1,8 @@
 /**
- * Hook to getAlbum data
+ * Custom Hook: useAlbum
+ *
+ * This hook fetches album data from the API whenever the URL parameter `album_id` changes.
+ * It uses React Query for data fetching and caching.
  */
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";

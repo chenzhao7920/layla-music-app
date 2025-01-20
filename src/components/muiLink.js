@@ -1,4 +1,14 @@
-// BookmarkButton.tsx
+/**
+ * MuiLink component
+ * Renders a link using the `react-router-dom` Link component and enhances it with Material-UI features.
+ * - Displays a popper with additional information when the link is hovered over.
+ * - Uses React.memo to optimize performance by preventing unnecessary re-renders.
+ *
+ * Props:
+ * @param {string} path - The navigation path for the link.
+ * @param {Object} rest - Additional props passed to the `Link` component.
+ */
+
 import React, { useState, useRef } from "react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { Popper, Paper } from "@mui/material";

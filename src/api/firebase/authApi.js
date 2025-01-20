@@ -1,3 +1,10 @@
+/**
+ * Firebase authentication API and Utility Functions
+ *
+ * This module provides utility functions for interacting with the Firebase API.
+ * It includes methods for user signup, sign-in and log out.
+ *
+ */
 // src/auth.js
 import { auth } from "./config";
 import {

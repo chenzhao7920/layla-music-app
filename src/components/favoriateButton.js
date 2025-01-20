@@ -1,4 +1,6 @@
-// BookmarkButton.tsx
+/**
+ * Favorite Button Component
+ */
 import React, { useState, useEffect, useRef } from "react";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import {

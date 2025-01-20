@@ -66,7 +66,7 @@ export default function Home() {
     searchTriggered,
   ]);
 
-  // fetching Data
+  // fetching Data use React query
   const { data, isLoading, error } = useQuery({
     queryKey: ["releases", country, year, genre, page, rowsPerPage],
     queryFn: () => searchReleases({ country, year, genre, page, rowsPerPage }),
@@ -98,7 +98,7 @@ export default function Home() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(1);
   };
-  // tag generater
+  // tags generater
   const tag = (txt, onClose) => {
     return (
       <div className="flex items-center gap-2 px-4 py-2 bg-gray-400 rounded-full">
@@ -112,7 +112,7 @@ export default function Home() {
       </div>
     );
   };
-
+  // handle filters state
   useEffect(() => {
     const initFilter = () => {
       setYearF(year);

@@ -1,10 +1,26 @@
+/**
+ * Authentication Redux Slice with Thunks
+ *
+ * This module manages authentication-related state and side effects using Redux Toolkit.
+ * It includes thunks for user authentication and slice reducers for state management.
+ */
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { signIn, signUp, logOut } from "../../api/firebase/authApi";
 
 // Thunks
+/**
+ * signInUser - Handles user sign-in.
+ *
+ * Dispatches loading state, signs in the user using Firebase, and updates the state on success.
+ *
+ * @param {Object} payload - User credentials.
+ * @param {string} payload.email - User email.
+ * @param {string} payload.password - User password.
+ * @param {boolean} payload.remember - Whether to persist login.
+ * @returns {Promise<Object>} - User data on success.
+ */
 export const signInUser = createAsyncThunk(
   "auth/signIn",
-  //TODO: persistent-login authentication
   async ({ email, password, remember }, { dispatch }) => {
     try {
       dispatch(loginStart());
@@ -19,6 +35,13 @@ export const signInUser = createAsyncThunk(
     }
   }
 );
+
+/**
+ * signOutUser - Handles user sign-out.
+ *
+ * Signs out the user using Firebase and updates the state to reflect the logged-out status.
+ */
+
 export const signOutUser = createAsyncThunk(
   "auth/signOut",
   async (_, { dispatch }) => {
@@ -32,6 +55,16 @@ export const signOutUser = createAsyncThunk(
   }
 );
 
+/**
+ * signUpUser - Handles user sign-up.
+ *
+ * Creates a new account for the user using Firebase and updates the state on success.
+ *
+ * @param {Object} payload - User credentials.
+ * @param {string} payload.email - User email.
+ * @param {string} payload.password - User password.
+ * @returns {Promise<Object>} - User data on success.
+ */
 export const signUpUser = createAsyncThunk(
   "auth/signUp",
   async ({ email, password }, { dispatch }) => {

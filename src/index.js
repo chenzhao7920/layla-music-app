@@ -7,7 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Provider } from "react-redux";
 import Store from "./redux/store";
-// Create a QueryClient instance
+// Create a QueryClient instance and configure the default cache strategy for React Query
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
