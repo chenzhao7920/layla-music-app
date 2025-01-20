@@ -1,15 +1,10 @@
 import React from "react";
-import { getMaster } from "../../api/discogs/discogsApi";
-import { useQuery } from "@tanstack/react-query";
 import FavoriteButton from "../../components/favoriateButton";
-import { useParams, Link } from "react-router-dom";
-
+import { Link } from "react-router-dom";
+import { useAlbum } from "../../hooks/useAlbum";
 const Album = () => {
-  const { album_id, title } = useParams();
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["album", album_id],
-    queryFn: () => getMaster(album_id),
-  });
+  const { data, isLoading, error } = useAlbum();
+
   if (error) return <p>Error: {error.message}</p>;
   return (
     !isLoading && (
@@ -20,10 +15,10 @@ const Album = () => {
               Homepage
             </Link>
             {" / "}
-            <h1 className="py-4 text-[32px] font-bold">{title}</h1>
+            <h1 className="py-4 text-[32px] font-bold">{data?.title}</h1>
           </div>
           <div className="flex-end">
-            <FavoriteButton type="album" id={album_id} />
+            <FavoriteButton type="album" id={data?.id} />
           </div>
         </div>
         <div className="flex w-full gap-8 p-10 overflow-hidden rounded-lg sm:justify-between max-sm:flex-col ">
