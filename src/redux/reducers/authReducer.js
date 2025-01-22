@@ -71,11 +71,18 @@ export const signUpUser = createAsyncThunk(
     try {
       dispatch(loginStart());
       const user = await signUp(email, password);
-      const userData = transformFirebaseUser(user);
-      dispatch(loginSuccess(userData));
-      return userData;
+      if (user) {
+        const userData = transformFirebaseUser(user);
+        dispatch(loginSuccess(userData));
+        return userData;
+      } else {
+        dispatch(
+          loginFailure("auth/email-already-in-use. Please try new one.")
+        );
+        return null;
+      }
     } catch (error) {
-      dispatch(loginFailure("Could not create account. Please try again."));
+      dispatch(loginFailure(error.message));
       throw error;
     }
   }
@@ -101,6 +108,7 @@ export const authSlice = createSlice({
       state.isAuthenticated = true;
       state.error = null;
       const { uid, email, accessToken } = action.payload;
+
       state.user = { uid, email, accessToken };
       // Store in localStorage
       localStorage.setItem("layla_access_token", accessToken);

@@ -58,6 +58,7 @@ export default function SignUp() {
   const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const error = useSelector((state) => state.auth.error);
@@ -102,8 +103,11 @@ export default function SignUp() {
     const data = new FormData(event.currentTarget);
     let email = data.get("email");
     let password = data.get("password");
-    dispatch(signUpUser({ email, password }));
-    navigate("/");
+    let { payload: newUser } = await dispatch(signUpUser({ email, password }));
+    if (newUser) {
+      console.log(newUser);
+      navigate("/");
+    }
   };
 
   return (
