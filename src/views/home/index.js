@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { TablePagination, Button, CircularProgress } from "@mui/material";
-import { searchReleases, getMaster } from "../../api/discogs/discogsApi";
+import { searchReleases } from "../../api/discogs/discogsApi";
 import { genreOptions, countryOptions } from "../../utils/constant";
 import crossImg from "../../statics/images/cross.svg";
-import { useQuery, useQueries } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import {
   getFavorites,
   addToFavorites,
@@ -72,23 +72,6 @@ export default function Home() {
     queryFn: () => searchReleases({ country, year, genre, page, rowsPerPage }),
     retry: 5,
   });
-  const artistQueries = useQueries({
-    queries: (data?.results || []).map((item) => ({
-      queryKey: ["master", item.master_id],
-      queryFn: () => getMaster(item.master_id),
-      enabled: !!data, // Only fetch artist data if release data is available
-    })),
-  });
-
-  const mappedArtistData = (data?.results || []).reduce((acc, item, index) => {
-    const artistQuery = artistQueries[index];
-    if (artistQuery?.data) {
-      acc[item.id] = artistQuery.data.artists; // Map `item.id` to the `artists` array
-    } else {
-      acc[item.id] = [];
-    }
-    return acc;
-  }, {});
 
   const handleChangePage = (_, newPage) => {
     setPage(newPage + 1);
@@ -238,12 +221,10 @@ export default function Home() {
         {!!data ? (
           <div className="flex flex-col gap-4 py-4">
             {data.results.map((item) => {
-              const artists = mappedArtistData[item.id] || [];
               return (
                 <HomeAlbumCard
                   key={item.id}
                   album={item}
-                  artists={artists}
                   favorites={favorites}
                   toggleFavorite={toggleFavorite}
                 />

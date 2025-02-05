@@ -6,13 +6,19 @@
  * release details, and getting master release information.
  */
 import axios from "axios";
-import { DISCOGS_API_CONFIG, DEFAULT_HEADERS } from "./config";
+import {
+  // DISCOGS_API_CONFIG,
+  // DEFAULT_HEADERS,
+  BACKEND_API_CONFIG,
+} from "./config";
 
-const discogsClient = axios.create({
-  baseURL: DISCOGS_API_CONFIG.baseURL,
-  headers: DEFAULT_HEADERS,
+// const discogsClient = axios.create({
+//   baseURL: DISCOGS_API_CONFIG.baseURL,
+//   headers: DEFAULT_HEADERS,
+// });
+const client = axios.create({
+  baseURL: BACKEND_API_CONFIG.baseURL,
 });
-
 export const searchReleases = async ({
   country,
   year,
@@ -33,21 +39,21 @@ export const searchReleases = async ({
   if (country) {
     params.append("country", country);
   }
-  const response = await discogsClient.get(`/database/search?${params}`);
+  const response = await client.get(`/api/v1/search?${params}`);
   return response.data;
 };
 
 export const getArtistReleases = async (artistId) => {
-  const response = await discogsClient.get(`/artists/${artistId}/releases`);
+  const response = await client.get(`/api/v1/artists/${artistId}/releases`);
   return response.data;
 };
 
 export const getReleaseDetails = async (releaseId) => {
-  const response = await discogsClient.get(`/releases/${releaseId}`);
+  const response = await client.get(`/api/v1/releases/${releaseId}`);
   return response.data;
 };
 
 export const getMaster = async (masterid) => {
-  const response = await discogsClient.get(`/masters/${masterid}`);
+  const response = await client.get(`/api/v1/masters/${masterid}`);
   return response.data;
 };

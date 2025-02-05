@@ -15,7 +15,7 @@ const HomeAlbumCard = ({ album, artists }) => {
       ></img>
       <div className="flex flex-col w-full gap-2">
         <Link
-          to={"/album/" + album?.id + "/" + album?.title}
+          to={"/album/" + album?.master_id + "/" + album?.title}
           className="underline"
         >
           <h3 className="font-semibold text-[24px] max-sm:text-center">
@@ -40,8 +40,9 @@ const HomeAlbumCard = ({ album, artists }) => {
             </div>
           </div>
         </div>
+
         <p>
-          <span className="font-medium">Artists</span>:{" "}
+          {/* <span className="font-medium">Artists</span>:{" "} */}
           {artists?.length > 0
             ? artists.map((a, index) => (
                 <Link
@@ -54,8 +55,9 @@ const HomeAlbumCard = ({ album, artists }) => {
                   {index < artists.length - 1 && ", "}{" "}
                 </Link>
               ))
-            : "-"}
+            : ""}
         </p>
+
         <p>
           <span className="font-medium">Format</span>:{" "}
           {album.format?.join(", ")}

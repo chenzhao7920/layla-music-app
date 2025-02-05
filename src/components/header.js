@@ -54,7 +54,7 @@ const Header = () => {
             )}
           </div>
         </div>
-        <h1 className="text-5xl font-bold leading-tight">Layla Music Search</h1>
+        <h1 className="text-5xl font-bold leading-tight">Music Search</h1>
         <p className="text-2xl font-light mt-4 max-w-2xl">
           Discover a song you will love
         </p>
