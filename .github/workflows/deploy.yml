@@ -28,7 +28,7 @@ jobs:
         uses: jakejarvis/s3-sync-action@master
         with:
           entryPoint: "aws s3 sync"
-          args: "./build s3://$AWS_S3_BUCKET"
+          args: "./build s3://cz-music-app-frontend"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
